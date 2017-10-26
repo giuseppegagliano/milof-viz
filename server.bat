@@ -1,0 +1,1 @@
+START cmd.exe /k "python -m http.server 8000"

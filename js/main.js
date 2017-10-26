@@ -8,11 +8,24 @@ const timer = window.setInterval(event, UPDATE_TIME);
 var svg, x, y, xAxis, yAxis, newData;
 var clusteringScatterPlot;
 
-window.onload = function(e){
-	clusteringScatterPlot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
-	clusteringScatterPlot.init();
-}
-
 function event() {
 	clusteringScatterPlot.updatePoints();
+}
+
+function switchContent(content) {
+		const title = document.getElementById('title').innerHTML = content;
+		switch(content) {
+	    case 'Scatterplot':
+					document.getElementsByClassName('chart')[0].innerHTML = "";
+					clusteringScatterPlot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
+					clusteringScatterPlot.init();
+	        break;
+	    case 'Heatmap':
+					document.getElementsByClassName('chart')[0].innerHTML = "";
+					// clusteringScatterPlot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
+					// clusteringScatterPlot.init();
+	        break;
+	    default:
+					document.getElementsByClassName('chart')[0].innerHTML = "<p>This website is a dashboard for MiLOF clustering</p>";
+			}
 }
