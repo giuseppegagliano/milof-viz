@@ -297,4 +297,13 @@ html { height: 100%;}
     bottom: 0;
     background-color: rgba(250,250,250,.8);
     z-index: 1;
+
+/*-------------------------------*/
+/*            Plots            */
+/*-------------------------------*/
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
 }

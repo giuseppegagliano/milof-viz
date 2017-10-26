@@ -1,29 +1,18 @@
+const	BASE_URL = "http://localhost:8000",
+		REAL_TIME_SCATTERPLOT_FILE = BASE_URL + "/results/scatterplot_clustering.csv",
+		OUTPUT_DIV_CLASS = ".chart",
+		PLOT_WIDTH = 500,	PLOT_HEIGHT = 500,
+		UPDATE_TIME = 5000;
 
-$(document).ready(function () {
-  var trigger = $('.hamburger'),
-      overlay = $('.overlay'),
-     isClosed = false;
+const timer = window.setInterval(event, UPDATE_TIME);
+var svg, x, y, xAxis, yAxis, newData;
+var clusteringScatterPlot;
 
-    trigger.click(function () {
-      hamburger_cross();
-    });
+window.onload = function(e){
+	clusteringScatterPlot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
+	clusteringScatterPlot.init();
+}
 
-    function hamburger_cross() {
-
-      if (isClosed == true) {
-        overlay.hide();
-        trigger.removeClass('is-open');
-        trigger.addClass('is-closed');
-        isClosed = false;
-      } else {
-        overlay.show();
-        trigger.removeClass('is-closed');
-        trigger.addClass('is-open');
-        isClosed = true;
-      }
-  }
-
-  $('[data-toggle="offcanvas"]').click(function () {
-        $('#wrapper').toggleClass('toggled');
-  });
-});
+function event() {
+	clusteringScatterPlot.updatePoints();
+}
