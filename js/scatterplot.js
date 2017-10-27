@@ -2,7 +2,7 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 	const s = this;
 
 	const
-		POINT_RADIUS = 3,
+		POINT_RADIUS = 5,
 		AXIS_PAD = .1,
 		PAD = 20,
 		LEFT_PAD = 70, color = d3.schemeCategory10;
@@ -25,7 +25,8 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 		tooltip = d3.select("body")
 			.append("div")
 	    .attr("class", "tooltip")
-	    .style("opacity", 0);
+	    .style("opacity", 0.99)
+	    .style("background", "lightblue");
 	}
 
 	s.translateAndScale = function() {
@@ -65,7 +66,6 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 	               .style("opacity", .9);
 	          tooltip.html(
 							"<b> Point: (" + d.x + "," + d.y + ")</b>" +
-							"<br/> <b>clusterCentre</b>: " + d.clusterCentre +
 							"<br/> <b>k-distance</b>: " + d.kDist +
 							"<br/> <b>LRD</b>: " + d.LRD +
 							"<br/> <b>LOF</b>: " + d.LOF )
