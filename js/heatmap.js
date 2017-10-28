@@ -1,11 +1,17 @@
+// TODO
+//https://stackoverflow.com/questions/34369116/to-integrate-d3-band-zoom-in-d3-heatmap
+//https://www.visualcinnamon.com/2013/07/self-organizing-maps-creating-hexagonal.html
 var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 	const s = this;
-//TODO
 	const
-		POINT_RADIUS = 3,
+		POINT_RADIUS = 50,
 		AXIS_PAD = .1,
 		PAD = 20,
-		LEFT_PAD = 70, color = d3.schemeCategory10;
+		LEFT_PAD = 70, color = d3.schemeCategory10,
+		COLOR_INIT = "red",
+		COLOR_MEDIUM = "yellow",
+		COLOR_FINAL = "green"
+		POINTS_OPACITY = .7;
 
 	var svg, tooltip, newData,
 		x, y, xAxis, yAxis,
@@ -13,7 +19,6 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 
 	s.init = function(){
 		s.putToView();
-		s.translateAndScale();
 		s.putInitialPoints();
 	}
 
@@ -25,7 +30,42 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 		tooltip = d3.select("body")
 			.append("div")
 	    .attr("class", "tooltip")
-	    .style("opacity", 0);
+	    .style("opacity", 0)
+	    .style("background", "lightgreen");
+	}
+
+	s.setGradientProperties = function(data){
+		//Radial gradient with the center at one end of the circle, as if illuminated from the side
+		var gradientRadial = svg.append("defs")
+			.selectAll("radialGradient")
+			.data(data)
+			.enter()
+			.append("radialGradient")
+			// QUA POTREBBE ESSERE UTILE INSERIRE UN ID VERO
+			.attr("id", function(d){ return "gradient-"+d.id; })
+			.attr("cx", "50%")
+			.attr("cy", "50%")
+			.attr("r", "50%");
+			//Append the color stops
+		gradientRadial.append("stop")
+			.attr("offset", "0%")
+			.attr("stop-color", function(d) { return d3.rgb(COLOR_INIT); });
+		gradientRadial.append("stop")
+			.attr("offset", function(d) {
+				if(d.LOF<1.0){
+					console.log("lof is",d.LOF);
+					return "50%";
+				}
+				else if(d.LOF<1.5){
+					console.log("lof is",d.LOF);
+					return "30%";
+				}
+				console.log("lof is",d.LOF);
+				return "10%"; })
+			.attr("stop-color", function(d) { return d3.rgb(COLOR_MEDIUM); });
+		gradientRadial.append("stop")
+			.attr("offset",  "100%")
+			.attr("stop-color", function(d) { return d3.rgb(255,255,255,.2); });
 	}
 
 	s.translateAndScale = function() {
@@ -51,14 +91,17 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 				s.computeBounds(o.x,o.y);
 				return o;});
 			s.translateAndScale();
+			s.setGradientProperties(newData);
 			svg.selectAll("circle")
 				.data(newData)
 				.enter()
 				.append("circle")
 				.attr("cx", function(d) {return x(d.x); })
 				.attr("cy", function(d) {return y(d.y); })
-				.attr("r", 	POINT_RADIUS)
-				.style("fill", function(d) {return color[cValue(d)];})
+				.attr("r", POINT_RADIUS)
+				// AL POSTO DI GRADIENT ANDREBBE MESSO L'ID
+				.style("fill", function(d) { return "url(#gradient-"+d.id+")"; })
+				.style("opacity", POINTS_OPACITY)
 	      .on("mouseover", function(d) {
 	          tooltip.transition()
 	               .duration(200)
@@ -80,12 +123,13 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 	}
 
 	s.updatePoints = function(){
-		s.translateAndScale();
 		d3.csv(filePath, function(data) {
 			newData = data.map(o =>{
 				s.computeBounds(o.x,o.y);
 				return o});
 
+				s.setGradientProperties(newData);
+				s.translateAndScale();
 
 			svg.selectAll("circle")
 				.data(newData)

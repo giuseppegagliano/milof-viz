@@ -1,11 +1,16 @@
 $(document).ready(function () {
   var trigger = $('.hamburger'),
       overlay = $('.overlay'),
+      sidebar =$('.nav'),
      isClosed = false;
 
-    trigger.click(function () {
-      hamburger_cross();
-    });
+     sidebar.click(function () {
+       trigger.click()
+     });
+
+     trigger.click(function () {
+       hamburger_cross();
+     });
 
     function hamburger_cross() {
 

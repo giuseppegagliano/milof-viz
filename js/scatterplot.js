@@ -5,7 +5,8 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 		POINT_RADIUS = 5,
 		AXIS_PAD = .1,
 		PAD = 20,
-		LEFT_PAD = 70, color = d3.schemeCategory10;
+		LEFT_PAD = 70, color = d3.schemeCategory10,
+		OUTLIER_THS = 1.5;
 
 	var svg, tooltip, newData,
 		x, y, xAxis, yAxis,
@@ -13,7 +14,6 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 
 	s.init = function(){
 		s.putToView();
-		s.translateAndScale();
 		s.putInitialPoints();
 	}
 
@@ -60,12 +60,14 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 				.attr("cy", function(d) {return y(d.y); })
 				.attr("r", 	POINT_RADIUS)
 				.style("fill", function(d) {return color[cValue(d)];})
+				.style("opacity", function(d) {if(cValue(d)==0) {return .5} else{ return 1;}})
 	      .on("mouseover", function(d) {
 	          tooltip.transition()
 	               .duration(200)
 	               .style("opacity", .9);
 	          tooltip.html(
 							"<b> Point: (" + d.x + "," + d.y + ")</b>" +
+							"<br/> <b>clusterCentre</b>: " + d.clusterCentre +
 							"<br/> <b>k-distance</b>: " + d.kDist +
 							"<br/> <b>LRD</b>: " + d.LRD +
 							"<br/> <b>LOF</b>: " + d.LOF )
@@ -80,12 +82,10 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 	}
 
 	s.updatePoints = function(){
-		s.translateAndScale();
 		d3.csv(filePath, function(data) {
 			newData = data.map(o =>{
 				s.computeBounds(o.x,o.y);
 				return o});
-
 
 			svg.selectAll("circle")
 				.data(newData)
@@ -93,6 +93,7 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 				.attr("cy", function(d) {return y(d.y); })
 				.attr("r", 	POINT_RADIUS);
 		});
+		s.translateAndScale();
 	}
 
 	s.computeBounds = function(xVal,yVal){
@@ -104,5 +105,10 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 
 
 	// setup fill color
-	var cValue = function(o) { return (o.clusterCentre.localeCompare("false"));};
+	var cValue = function(o) {
+		if(o.clusterCentre.localeCompare("true")==0){
+						return 2;} // GREEN
+		if(o.LOF<OUTLIER_THS){			return 0;} // BLUE SEE schemeCategory10  https://github.com/d3/d3-scale
+		return 1; // ORANGE
+	};
 }

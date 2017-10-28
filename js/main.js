@@ -6,17 +6,10 @@ const	BASE_URL = "http://localhost:8000",
 
 const timer = window.setInterval(event, UPDATE_TIME);
 var currentPage = 'Home';
-var clusteringScatterPlot;
+var plot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
 
 function event() {
-	switch(currentPage) {
-		case 'Scatterplot':
-			clusteringScatterPlot.updatePoints();
-			break;
-		case 'Heatmap':
-        break;
-    default:
-		}
+		plot.updatePoints();
 }
 
 function switchContent(content) {
@@ -25,13 +18,13 @@ function switchContent(content) {
 		switch(content) {
 	    case 'Scatterplot':
 					document.getElementsByClassName('chart')[0].innerHTML = "";
-					clusteringScatterPlot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
-					clusteringScatterPlot.init();
+					plot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
+					plot.init();
 	        break;
 	    case 'Heatmap':
 					document.getElementsByClassName('chart')[0].innerHTML = "";
-					clusteringScatterPlot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
-					clusteringScatterPlot.init();
+					plot = new ClusteringHeatmap(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
+					plot.init();
 	        break;
 	    default:
 					document.getElementsByClassName('chart')[0].innerHTML = "<p>This website is a dashboard for MiLOF clustering</p>";
