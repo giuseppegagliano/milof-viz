@@ -20,6 +20,7 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 	s.init = function(){
 		s.putToView();
 		s.putInitialPoints();
+		s.drawLegend();
 	}
 
 	s.putToView = function(){
@@ -72,7 +73,7 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 		x = d3.scaleLinear().domain([xMin - AXIS_PAD, xMax + AXIS_PAD])
 					.range([LEFT_PAD, plotWidth - PAD]);
 		y = d3.scaleLinear().domain([yMin - AXIS_PAD, yMax + AXIS_PAD])
-					.range([PAD, plotHeight - PAD*2]);
+					.range([plotHeight - PAD, PAD]);
 		xAxis = d3.axisBottom().scale(x);
 		yAxis = d3.axisLeft().scale(y);
 		svg.append("g")
@@ -146,7 +147,25 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 		yMin = (yMin == 0) ? yVal : Math.min(yMin, yVal);
 	}
 
-
 	// setup fill color
 	var cValue = function(o) { return (o.clusterCentre.localeCompare("false"));};
+
+	s.drawLegend = function(){
+		var legend = svg.selectAll(".legend")
+				.data([{"color":d3.rgb(COLOR_INIT),"label":"Higher Local Density"},{"color":d3.rgb(COLOR_MEDIUM),"label":"Lower Local Density"}])
+				.enter().append("g")
+				.attr("class", "legend")
+				.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+		legend.append("rect")
+				.attr("x", plotWidth - 150)
+				.attr("width", 20)
+				.attr("height", 20)
+				.style("fill", function(d) {return d.color});
+		legend.append("text")
+				.attr("x", plotWidth-120)
+				.attr("y",10)
+				.attr("dy", ".35em")
+				.style("text-anchor", "start")
+				.text(function(d) {return d.label});
+	}
 }

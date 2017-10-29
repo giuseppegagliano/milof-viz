@@ -3,9 +3,8 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 
 	const
 		POINT_RADIUS = 5,
-		AXIS_PAD = .1,
-		PAD = 20,
-		LEFT_PAD = 70, color = d3.schemeCategory10,
+		AXIS_PAD = .1, PAD = 20, LEFT_PAD = 70,
+		color = d3.schemeCategory10,
 		OUTLIER_THS = 1.5;
 
 	var svg, tooltip, newData,
@@ -15,6 +14,7 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 	s.init = function(){
 		s.putToView();
 		s.putInitialPoints();
+		s.drawLegend();
 	}
 
 	s.putToView = function(){
@@ -33,7 +33,7 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 		x = d3.scaleLinear().domain([xMin - AXIS_PAD, xMax + AXIS_PAD])
 					.range([LEFT_PAD, plotWidth - PAD]);
 		y = d3.scaleLinear().domain([yMin - AXIS_PAD, yMax + AXIS_PAD])
-					.range([PAD, plotHeight - PAD*2]);
+					.range([plotHeight-PAD, PAD]);
 		xAxis = d3.axisBottom().scale(x);
 		yAxis = d3.axisLeft().scale(y);
 		svg.append("g")
@@ -79,6 +79,25 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 							.duration(800)
 							.style("opacity", 0);});
 		});
+	}
+
+	s.drawLegend = function(){
+		var legend = svg.selectAll(".legend")
+				.data([{"color":1,"label":"Outlier"},{"color":0,"label":"Inlier"},{"color":2,"label":"Cluster Center"}])
+				.enter().append("g")
+				.attr("class", "legend")
+				.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+		legend.append("rect")
+				.attr("x", plotWidth - 150)
+				.attr("width", 20)
+				.attr("height", 20)
+				.style("fill", function(d) {return color[d.color]});
+		legend.append("text")
+				.attr("x", plotWidth-120)
+				.attr("y",10)
+				.attr("dy", ".35em")
+				.style("text-anchor", "start")
+				.text(function(d) {return d.label});
 	}
 
 	s.updatePoints = function(){
