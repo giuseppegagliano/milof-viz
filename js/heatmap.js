@@ -70,20 +70,24 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 	}
 
 	s.translateAndScale = function() {
+		var divWidth = $(view).width();
+		var divHeight = divWidth * .7;
 		x = d3.scaleLinear().domain([xMin - AXIS_PAD, xMax + AXIS_PAD])
-					.range([LEFT_PAD, plotWidth - PAD]);
+					.range([LEFT_PAD, divWidth - PAD]);
 		y = d3.scaleLinear().domain([yMin - AXIS_PAD, yMax + AXIS_PAD])
-					.range([plotHeight - PAD, PAD]);
+					.range([divHeight - PAD, PAD]);
 		xAxis = d3.axisBottom().scale(x);
 		yAxis = d3.axisLeft().scale(y);
+		d3.selectAll(".axis").remove();
 		svg.append("g")
 			.attr("class", "axis")
-			.attr("transform", "translate(0, "+(plotHeight - PAD)+")")
+			.attr("transform", "translate(0, "+(divHeight - PAD)+")")
 			.call(xAxis);
 		svg.append("g")
 			.attr("class", "axis")
 			.attr("transform", "translate("+(LEFT_PAD - PAD)+", 0)")
 			.call(yAxis);
+		svg.attr('width', divWidth).attr('height', divHeight);
 	}
 
 	s.putInitialPoints = function() {
@@ -103,7 +107,7 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 				// AL POSTO DI GRADIENT ANDREBBE MESSO L'ID
 				.style("fill", function(d) { return "url(#gradient-"+d.id+")"; })
 				.style("opacity", POINTS_OPACITY)
-	      .on("mouseover", function(d) {
+	      .on("click", function(d) {
 	          tooltip.transition()
 	               .duration(200)
 	               .style("opacity", .9);

@@ -30,20 +30,24 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 	}
 
 	s.translateAndScale = function() {
+		var divWidth = $(view).width();
+		var divHeight = divWidth * .7;
 		x = d3.scaleLinear().domain([xMin - AXIS_PAD, xMax + AXIS_PAD])
-					.range([LEFT_PAD, plotWidth - PAD]);
+					.range([LEFT_PAD, divWidth - PAD]);
 		y = d3.scaleLinear().domain([yMin - AXIS_PAD, yMax + AXIS_PAD])
-					.range([plotHeight-PAD, PAD]);
+					.range([divHeight-PAD, PAD]);
 		xAxis = d3.axisBottom().scale(x);
 		yAxis = d3.axisLeft().scale(y);
+		d3.selectAll(".axis").remove();
 		svg.append("g")
 			.attr("class", "axis")
-			.attr("transform", "translate(0, "+(plotHeight - PAD)+")")
+			.attr("transform", "translate(0, "+(divHeight - PAD)+")")
 			.call(xAxis);
 		svg.append("g")
 			.attr("class", "axis")
 			.attr("transform", "translate("+(LEFT_PAD - PAD)+", 0)")
 			.call(yAxis);
+		svg.attr('width', divWidth).attr('height', divHeight);
 	}
 
 	s.putInitialPoints = function() {
@@ -61,7 +65,7 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 				.attr("r", 	POINT_RADIUS)
 				.style("fill", function(d) {return color[cValue(d)];})
 				.style("opacity", function(d) {if(cValue(d)==0) {return .5} else{ return 1;}})
-	      .on("mouseover", function(d) {
+	      .on("click", function(d) {
 	          tooltip.transition()
 	               .duration(200)
 	               .style("opacity", .9);
@@ -122,7 +126,6 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 		yMin = (yMin == 0) ? yVal : Math.min(yMin, yVal);
 	}
 
-
 	// setup fill color
 	var cValue = function(o) {
 		if(o.clusterCentre.localeCompare("true")==0){
@@ -130,4 +133,52 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 		if(o.LOF<OUTLIER_THS){			return 0;} // BLUE SEE schemeCategory10  https://github.com/d3/d3-scale
 		return 1; // ORANGE
 	};
+	//
+	//
+	//
+	// s.render = function() {
+	//
+	// 	//get dimensions based on window size
+	// 	updateDimensions(window.innerWidth);
+	//
+	// 	//update x and y scales to new dimensions
+	// 	x.range([0, width]);
+	// 	y.range([height, 0]);
+	//
+	// 	//update svg elements to new dimensions
+	// 	svg
+	// 		.attr('width', width + margin.right + margin.left)
+	// 		.attr('height', height + margin.top + margin.bottom);
+	// 	chartWrapper.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+	//
+	// 	//update the axis and line
+	// 	xAxis.scale(x);
+	// 	yAxis.scale(y);
+	//
+	// 	svg.select('.x.axis')
+	// 		.attr('transform', 'translate(0,' + height + ')')
+	// 		.call(xAxis);
+	//
+	// 	svg.select('.y.axis')
+	// 		.call(yAxis);
+	//
+	// 	path.attr('d', line);
+	// }
+	//
+	// s.updateDimensions = function(winWidth) {
+	// 	margin.top = 20;
+	// 	margin.right = 50;
+	// 	margin.left = 50;
+	// 	margin.bottom = 50;
+	//
+	// 	width = winWidth - margin.left - margin.right;
+	// 	height = 500 - margin.top - margin.bottom;
+	// }
+	//
+	// return {
+	// 	render : render
+	// }
+	//
+
+
 }

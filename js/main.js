@@ -8,7 +8,13 @@ const timer = window.setInterval(event, UPDATE_TIME);
 var currentPage = 'Home';
 var plot = new ClusteringScatterPlot(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
 
+window.addEventListener('resize', function() {
+		plot.updatePoints();
+		plot.translateAndScale();
+});
+
 function event() {
+	console.log("updating ...");
 		plot.updatePoints();
 }
 

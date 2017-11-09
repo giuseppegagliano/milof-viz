@@ -49,7 +49,7 @@ html { height: 100%;}
 
 #page-content-wrapper {
     width: 100%;
-    padding-top: 70px;
+    padding-top: 10px;
 }
 
 #wrapper.toggled #page-content-wrapper {
@@ -58,7 +58,7 @@ html { height: 100%;}
 }
 
 #main-content{
-    padding-left: 150px;
+    padding-left: 10%;
 }
 
 /*-------------------------------*/
@@ -306,4 +306,9 @@ html { height: 100%;}
   width: 200px;
   height: 28px;
   pointer-events: none;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
 }
