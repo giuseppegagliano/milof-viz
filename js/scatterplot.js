@@ -31,7 +31,7 @@ var ClusteringScatterPlot = function(view, plotWidth, plotHeight, filePath){
 
 	s.translateAndScale = function() {
 		var divWidth = $(view).width();
-		var divHeight = divWidth * .7;
+		var divHeight = Math.max($("BODY").height() - $("#title").height() - PAD, 100);
 		x = d3.scaleLinear().domain([xMin - AXIS_PAD, xMax + AXIS_PAD])
 					.range([LEFT_PAD, divWidth - PAD]);
 		y = d3.scaleLinear().domain([yMin - AXIS_PAD, yMax + AXIS_PAD])

@@ -32,6 +32,10 @@ function switchContent(content) {
 					plot = new ClusteringHeatmap(OUTPUT_DIV_CLASS, PLOT_WIDTH, PLOT_HEIGHT, REAL_TIME_SCATTERPLOT_FILE);
 					plot.init();
 	        break;
+			case 'Metrics':
+					var height = $("BODY").height();
+					document.getElementsByClassName('chart')[0].innerHTML = '<object  data="content/metrics.html" width="100%" height="'+height+'px"/>';
+	        break;
 	    default:
 					document.getElementsByClassName('chart')[0].innerHTML = "<p>This website is a dashboard for MiLOF clustering</p>";
 			}
