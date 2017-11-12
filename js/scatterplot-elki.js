@@ -1,4 +1,4 @@
-var ClusteringScatterPlot = function(view, filePath){
+var ClusteringELKIScatterPlot = function(view, filePath){
 	const s = this;
 
 	const
@@ -14,7 +14,6 @@ var ClusteringScatterPlot = function(view, filePath){
 	s.init = function(){
 		s.putToView();
 		s.putInitialPoints();
-		s.drawLegend();
 	}
 
 	s.putToView = function(){
@@ -50,8 +49,6 @@ var ClusteringScatterPlot = function(view, filePath){
 			.attr("transform", "translate("+(LEFT_PAD - PAD)+", 0)")
 			.call(yAxis);
 		svg.attr('width', divWidth).attr('height', divHeight);
-		svg.selectAll(".legend").remove();
-		s.drawLegend();
 	}
 
 	s.putInitialPoints = function() {
@@ -66,10 +63,10 @@ var ClusteringScatterPlot = function(view, filePath){
 				.append("circle")
 				.attr("cx", function(d) {return x(d.x); })
 				.attr("cy", function(d) {return y(d.y); })
-				.attr("r", 	POINT_RADIUS)
-				.style("fill", function(d) {return color[cValue(d)];})
-				.style("stroke", "black")
-				.style("opacity", function(d) {if(cValue(d)==0) {return .5} else{ return 1;}})
+				.attr("r", 	function(d) {	return Math.min(d.LOF,$(view).width()/2); })
+				.style("fill", "transparent")
+				.style("stroke", "red")
+				.style("stroke-width", "3px")
 	      .on("click", function(d) {
 	          tooltip.transition()
 	               .duration(200)
@@ -90,31 +87,10 @@ var ClusteringScatterPlot = function(view, filePath){
 		});
 	}
 
-	s.drawLegend = function(){
-		var divWidth = $(view).width();
-		var legend = svg.selectAll(".legend")
-				.data([{"color":1,"label":"Outlier"},{"color":0,"label":"Inlier"},{"color":2,"label":"Cluster Center"}])
-				.enter().append("g")
-				.attr("class", "legend")
-				.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
-				.style("opacity", .5);
-		legend.append("rect")
-				.attr("x", divWidth - 150)
-				.attr("width", 20)
-				.attr("height", 20)
-				.style("fill", function(d) {return color[d.color]})
-				.style("stroke", "black");
-		legend.append("text")
-				.attr("x", divWidth-120)
-				.attr("y",10)
-				.attr("dy", ".35em")
-				.style("text-anchor", "start")
-				.text(function(d) {return d.label});
-	}
-
 	s.updatePoints = function(){
 		svg.remove();
 		s.init();
+		s.translateAndScale();
 	}
 
 	s.computeBounds = function(xVal,yVal){
@@ -131,4 +107,5 @@ var ClusteringScatterPlot = function(view, filePath){
 		if(o.LOF<OUTLIER_THS){			return 0;} // BLUE SEE schemeCategory10  https://github.com/d3/d3-scale
 		return 1; // ORANGE
 	};
+
 }

@@ -1,7 +1,7 @@
 // TODO
 //https://stackoverflow.com/questions/34369116/to-integrate-d3-band-zoom-in-d3-heatmap
 //https://www.visualcinnamon.com/2013/07/self-organizing-maps-creating-hexagonal.html
-var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
+var ClusteringHeatmap = function(view, filePath){
 	const s = this;
 	const
 		POINT_RADIUS = 50,
@@ -24,10 +24,12 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 	}
 
 	s.putToView = function(){
+		var divWidth = $(view).width();
+		var divHeight = Math.max($("BODY").height() - $("#title").height() - PAD, 100);
 		svg = d3.select(view)
 			.append("svg")
-			.attr("width", plotWidth)
-			.attr("height", plotHeight);
+			.attr("width", divWidth)
+			.attr("height", divHeight - PAD);
 		tooltip = d3.select("body")
 			.append("div")
 	    .attr("class", "tooltip")
@@ -128,20 +130,8 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 	}
 
 	s.updatePoints = function(){
-		d3.csv(filePath, function(data) {
-			newData = data.map(o =>{
-				s.computeBounds(o.x,o.y);
-				return o});
-
-				s.setGradientProperties(newData);
-				s.translateAndScale();
-
-			svg.selectAll("circle")
-				.data(newData)
-				.attr("cx", function(d) {return x(d.x); })
-				.attr("cy", function(d) {return y(d.y); })
-				.attr("r", 	POINT_RADIUS);
-		});
+		svg.remove();
+		s.init();
 	}
 
 	s.computeBounds = function(xVal,yVal){
@@ -155,18 +145,21 @@ var ClusteringHeatmap = function(view, plotWidth, plotHeight, filePath){
 	var cValue = function(o) { return (o.clusterCentre.localeCompare("false"));};
 
 	s.drawLegend = function(){
+		var divWidth = $(view).width();
 		var legend = svg.selectAll(".legend")
 				.data([{"color":d3.rgb(COLOR_INIT),"label":"Higher Local Density"},{"color":d3.rgb(COLOR_MEDIUM),"label":"Lower Local Density"}])
 				.enter().append("g")
 				.attr("class", "legend")
-				.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+				.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+				.style("opacity", .5);
 		legend.append("rect")
-				.attr("x", plotWidth - 150)
+				.attr("x", divWidth - 170)
 				.attr("width", 20)
 				.attr("height", 20)
-				.style("fill", function(d) {return d.color});
+				.style("fill", function(d) {return d.color})
+				.style("stroke", "black");
 		legend.append("text")
-				.attr("x", plotWidth-120)
+				.attr("x", divWidth-145)
 				.attr("y",10)
 				.attr("dy", ".35em")
 				.style("text-anchor", "start")
